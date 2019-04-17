@@ -1,4 +1,6 @@
-﻿namespace CreditCardApplications
+﻿using System;
+
+namespace CreditCardApplications
 {
     public class FrequentFlyerNumberValidator : IFrequentFlyerNumberValidator
     {
@@ -11,5 +13,7 @@
         {
             throw new System.NotImplementedException("For demo purposes");
         }
+
+        public IServiceInformation ServiceInformation { get => throw new NotImplementedException("For demo purposes"); }
     }
 }
