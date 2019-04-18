@@ -172,6 +172,45 @@ namespace CreditCardApplications.Tests
         //    mockValidator.Verify(x => x.IsValid(It.IsNotNull<string>()), "Frequent flyer number passed should not be null");
         //}
 
+        [Fact]
+        public void Evaluate_not_validate_FrequentFlyerNumber_for_high_income_applications()
+        {
+            var mockValidator=new Mock<IFrequentFlyerNumberValidator>();
+            mockValidator.Setup(v => v.ServiceInformation.License.LicenseKey).Returns("OK");
+            var sut=new CreditCardApplicationEvaluator(mockValidator.Object);
+            var application = new CreditCardApplication() {GrossAnnualIncome = 100_000};
+            sut.Evaluate(application);
+
+            mockValidator.Verify(v=>v.IsValid(It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public void Evaluate_should_check_lisenceKey_for_lowIncome_applications()
+        {
+            var mockValidator=new Mock<IFrequentFlyerNumberValidator>();
+            mockValidator.Setup(v => v.ServiceInformation.License.LicenseKey).Returns("OK");
+
+            var sut=new CreditCardApplicationEvaluator(mockValidator.Object);
+
+            var application = new CreditCardApplication() {GrossAnnualIncome = 99_000};
+            sut.Evaluate(application);
+            mockValidator.VerifyGet(x=>x.ServiceInformation.License.LicenseKey);
+        }
+
+        [Fact]
+        public void Evaluate_should_set_detailedLookup_for_older_applications()
+        {
+            var mockValidator=new Mock<IFrequentFlyerNumberValidator>();
+            mockValidator.Setup(v => v.ServiceInformation.License.LicenseKey).Returns("OK");
+
+            var sut=new CreditCardApplicationEvaluator(mockValidator.Object);
+
+            var application = new CreditCardApplication() {Age = 30};
+            sut.Evaluate(application);
+
+            mockValidator.VerifySet(v=>v.ValidationMode=ValidationMode.Detailed);
+        }
+
         private string GetLicenseKeyExpiryString() => "EXPIRED";
         private string GetLicenseKeyExpiryStringOk() => "OK";
     }
