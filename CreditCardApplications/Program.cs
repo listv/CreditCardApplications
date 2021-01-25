@@ -2,11 +2,11 @@
 
 namespace CreditCardApplications
 {
-    public static class Program
+    class Program
     {
-        public static void Main()
+        void Main()
         {
-            Console.WriteLine("Hello World!!!!!!!!!!");
+            Console.WriteLine("Hello World!");
         }
     }
 }
